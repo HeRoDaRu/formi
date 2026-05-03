@@ -1,1 +1,432 @@
+/* ============================================================
+   FORMICARIUM VIVO — css/style.css
+   Estética: naturalista oscura, tierra y ámbar.
+   Fuentes: Cinzel (display) + Source Code Pro (datos).
+   Layout: vertical, mobile-first.
+============================================================ */
 
+/* ── FUENTES ─────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Source+Code+Pro:wght@400;500&display=swap');
+
+/* ── VARIABLES ───────────────────────────────────────────── */
+:root {
+  --bg:          #0f0a05;
+  --bg-panel:    #1a1008;
+  --bg-card:     #231508;
+  --border:      #3d2510;
+  --border-glow: #6b3d18;
+  --amber:       #c8832a;
+  --amber-light: #e8b060;
+  --amber-dim:   #7a4d18;
+  --text:        #d4a872;
+  --text-dim:    #7a5a38;
+  --text-muted:  #4a3520;
+  --green:       #5a9e4a;
+  --yellow:      #c8a030;
+  --red:         #b03020;
+  --red-dim:     #601810;
+  --blue:        #3a6898;
+  --radius:      6px;
+  --font-display: 'Cinzel', Georgia, serif;
+  --font-mono:    'Source Code Pro', 'Courier New', monospace;
+}
+
+/* ── RESET ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* ── LAYOUT PRINCIPAL ────────────────────────────────────── */
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 0 2rem;
+}
+
+/* ── CABECERA ─────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 1rem 1rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--amber-light);
+  letter-spacing: 0.05em;
+}
+
+header h1 span {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  margin-left: 0.5rem;
+  font-style: italic;
+}
+
+#day-counter {
+  font-size: 0.85rem;
+  color: var(--amber-dim);
+  letter-spacing: 0.08em;
+}
+
+/* ── VISTA DEL NIDO (CANVAS) ─────────────────────────────── */
+#nest-wrapper {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+#nest-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── PANEL DE CONTROL ────────────────────────────────────── */
+#control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+/* ── TARJETAS ─────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.85rem;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber-dim);
+  margin-bottom: 0.5rem;
+}
+
+/* ── REINA ───────────────────────────────────────────────── */
+#queen-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.queen-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.queen-info {
+  flex: 1;
+}
+
+.queen-status {
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+.queen-status.alive { color: var(--amber-light); }
+.queen-status.dead  { color: var(--red); }
+
+#queen-age {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+/* ── POBLACIÓN ───────────────────────────────────────────── */
+#population-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.pop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0.5rem;
+  background: rgba(255,255,255,0.02);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.pop-label {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.pop-value {
+  font-size: 0.9rem;
+  color: var(--amber-light);
+  font-weight: 500;
+}
+
+/* ── RECURSOS ────────────────────────────────────────────── */
+.resource-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.resource-row:last-child { margin-bottom: 0; }
+
+.resource-emoji {
+  width: 1.4rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.resource-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.resource-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease, background-color 0.4s;
+}
+
+.resource-fill.ok   { background: var(--green); }
+.resource-fill.warn { background: var(--yellow); }
+.resource-fill.crit {
+  background: var(--red);
+  animation: pulse-crit 1s ease-in-out infinite;
+}
+
+@keyframes pulse-crit {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.resource-val {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  width: 7rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── CÁMARAS ─────────────────────────────────────────────── */
+#chambers-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.chamber-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.5rem 0.3rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+.chamber-btn:hover:not(:disabled) {
+  border-color: var(--amber);
+  background: rgba(200,131,42,0.08);
+}
+
+.chamber-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.chamber-emoji { font-size: 1.4rem; line-height: 1; }
+.chamber-name  { font-size: 0.65rem; color: var(--text-dim); }
+.chamber-count { font-size: 0.8rem; color: var(--amber); font-weight: 500; }
+.chamber-cost  { font-size: 0.6rem; color: var(--text-muted); }
+
+/* ── DIARIO DE EVENTOS ───────────────────────────────────── */
+#event-log {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.log-entry {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.4rem;
+  border-radius: 3px;
+  border-left: 2px solid transparent;
+  line-height: 1.4;
+}
+
+.log-day {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-right: 0.4rem;
+}
+
+.log-info    { color: var(--text-dim);   border-left-color: var(--text-muted); }
+.log-success { color: var(--green);      border-left-color: var(--green); }
+.log-warning { color: var(--yellow);     border-left-color: var(--yellow); }
+.log-danger  { color: var(--red);        border-left-color: var(--red);
+               background: rgba(176,48,32,0.08); }
+
+/* ── OVERLAY OFFLINE ─────────────────────────────────────── */
+#offline-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,5,0,0.92);
+  z-index: 100;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+#offline-overlay.visible { display: flex; }
+
+#offline-overlay h2 {
+  font-family: var(--font-display);
+  color: var(--amber-light);
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+}
+
+#offline-msg {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+#offline-bar-track {
+  width: 260px;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+#offline-bar {
+  height: 100%;
+  background: var(--amber);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* ── GAME OVER ───────────────────────────────────────────── */
+#game-over {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(5,2,0,0.96);
+  z-index: 200;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+#game-over.visible { display: flex; }
+
+#game-over h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--red);
+  letter-spacing: 0.1em;
+}
+
+#game-over .go-stats {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  line-height: 2;
+}
+
+#game-over .go-stats strong {
+  color: var(--amber-light);
+}
+
+#btn-restart {
+  margin-top: 0.5rem;
+  padding: 0.6rem 2rem;
+  background: transparent;
+  border: 1px solid var(--amber);
+  color: var(--amber-light);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#btn-restart:hover {
+  background: rgba(200,131,42,0.15);
+}
+
+/* ── BOTÓN DE BORRAR SAVE ────────────────────────────────── */
+#btn-delete-save {
+  display: block;
+  margin: 0 auto;
+  padding: 0.35rem 1rem;
+  background: transparent;
+  border: 1px solid var(--red-dim);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+#btn-delete-save:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+/* ── SCROLLBAR ───────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── RESPONSIVE (pantallas más anchas) ───────────────────── */
+@media (min-width: 480px) {
+  header h1  { font-size: 1.5rem; }
+  #nest-wrapper { height: 300px; }
+  .resource-val { width: 8.5rem; }
+}
