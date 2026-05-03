@@ -27,7 +27,7 @@ render();
 }
 } else {
 // Nueva partida: mostrar hint de bienvenida
-logEvent(“🐜 Bienvenido a Formicarium Vivo. Tu reina ha llegado.”, “success”);
+logEvent(“🐜 Bienvenido a Formi. Tu reina ha llegado.”, “success”);
 logEvent(“💡 Construye cámaras de cría para dar espacio al nido.”, “info”);
 render();
 }
