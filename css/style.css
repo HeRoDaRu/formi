@@ -1,37 +1,32 @@
 /* ============================================================
-   FORMICARIUM VIVO — css/style.css
-   Estética: naturalista oscura, tierra y ámbar.
-   Fuentes: Cinzel (display) + Source Code Pro (datos).
-   Layout: vertical, mobile-first.
+   FORMI — css/style.css
+   Tema naturalista oscuro. Canvas con fondo tierra claro.
+   Mobile-first, layout vertical.
 ============================================================ */
 
-/* ── FUENTES ─────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Source+Code+Pro:wght@400;500&display=swap');
 
-/* ── VARIABLES ───────────────────────────────────────────── */
 :root {
-  --bg:          #0f0a05;
-  --bg-panel:    #1a1008;
-  --bg-card:     #231508;
-  --border:      #3d2510;
-  --border-glow: #6b3d18;
-  --amber:       #c8832a;
-  --amber-light: #e8b060;
-  --amber-dim:   #7a4d18;
-  --text:        #d4a872;
-  --text-dim:    #7a5a38;
-  --text-muted:  #4a3520;
-  --green:       #5a9e4a;
-  --yellow:      #c8a030;
-  --red:         #b03020;
-  --red-dim:     #601810;
-  --blue:        #3a6898;
-  --radius:      6px;
+  --bg:           #0f0a05;
+  --bg-panel:     #1a1008;
+  --bg-card:      #1e1209;
+  --border:       #3d2510;
+  --border-glow:  #6b3d18;
+  --amber:        #c8832a;
+  --amber-light:  #e8b060;
+  --amber-dim:    #7a4d18;
+  --text:         #d4a872;
+  --text-dim:     #7a5a38;
+  --text-muted:   #4a3520;
+  --green:        #5a9e4a;
+  --yellow:       #c8a030;
+  --red:          #b03020;
+  --red-dim:      #601810;
+  --radius:       6px;
   --font-display: 'Cinzel', Georgia, serif;
   --font-mono:    'Source Code Pro', 'Courier New', monospace;
 }
 
-/* ── RESET ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
@@ -44,35 +39,33 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ── LAYOUT PRINCIPAL ────────────────────────────────────── */
 #app {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
   max-width: 680px;
   margin: 0 auto;
-  padding: 0 0 2rem;
+  padding-bottom: 2rem;
 }
 
-/* ── CABECERA ─────────────────────────────────────────────── */
 header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  padding: 1rem 1rem 0.5rem;
+  padding: 0.9rem 1rem 0.6rem;
   border-bottom: 1px solid var(--border);
 }
 
 header h1 {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--amber-light);
   letter-spacing: 0.05em;
 }
 
 header h1 span {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 400;
   color: var(--text-dim);
   font-family: var(--font-mono);
@@ -81,18 +74,18 @@ header h1 span {
 }
 
 #day-counter {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--amber-dim);
   letter-spacing: 0.08em;
 }
 
-/* ── VISTA DEL NIDO (CANVAS) ─────────────────────────────── */
 #nest-wrapper {
   position: relative;
   width: 100%;
   height: 260px;
   border-bottom: 1px solid var(--border);
   overflow: hidden;
+  background: #3a2210;
 }
 
 #nest-canvas {
@@ -101,15 +94,13 @@ header h1 span {
   height: 100%;
 }
 
-/* ── PANEL DE CONTROL ────────────────────────────────────── */
 #control-panel {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.65rem;
   padding: 0.75rem 1rem;
 }
 
-/* ── TARJETAS ─────────────────────────────────────────────── */
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -119,44 +110,29 @@ header h1 span {
 
 .card-title {
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--amber-dim);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.55rem;
 }
 
-/* ── REINA ───────────────────────────────────────────────── */
 #queen-card {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.queen-icon {
-  font-size: 2rem;
-  line-height: 1;
-}
+.queen-icon { font-size: 2rem; line-height: 1; }
+.queen-info { flex: 1; }
 
-.queen-info {
-  flex: 1;
-}
-
-.queen-status {
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: color 0.3s;
-}
+.queen-status { font-size: 0.9rem; font-weight: 500; }
 .queen-status.alive { color: var(--amber-light); }
 .queen-status.dead  { color: var(--red); }
 
-#queen-age {
-  font-size: 0.75rem;
-  color: var(--text-dim);
-}
+#queen-age { font-size: 0.72rem; color: var(--text-dim); }
 
-/* ── POBLACIÓN ───────────────────────────────────────────── */
 #population-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -173,31 +149,22 @@ header h1 span {
   border: 1px solid var(--border);
 }
 
-.pop-label {
-  color: var(--text-dim);
-  font-size: 0.75rem;
-}
+.pop-label { color: var(--text-dim); font-size: 0.72rem; }
+.pop-value { font-size: 0.88rem; color: var(--amber-light); font-weight: 500; }
 
-.pop-value {
-  font-size: 0.9rem;
-  color: var(--amber-light);
-  font-weight: 500;
-}
-
-/* ── RECURSOS ────────────────────────────────────────────── */
 .resource-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.45rem;
 }
-
 .resource-row:last-child { margin-bottom: 0; }
 
-.resource-emoji {
-  width: 1.4rem;
-  text-align: center;
-  font-size: 1rem;
+.resource-label {
+  width: 4.5rem;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  flex-shrink: 0;
 }
 
 .resource-track {
@@ -224,18 +191,67 @@ header h1 span {
 
 @keyframes pulse-crit {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.5; }
+  50%       { opacity: 0.45; }
 }
 
 .resource-val {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: var(--text-dim);
-  width: 7rem;
+  width: 6.5rem;
   text-align: right;
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
 
-/* ── CÁMARAS ─────────────────────────────────────────────── */
+#feed-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.feed-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.55rem 0.3rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  touch-action: manipulation;
+}
+
+.feed-btn:hover:not(:disabled) {
+  background: rgba(200,131,42,0.12);
+  border-color: var(--amber);
+}
+
+.feed-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.feed-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.feed-emoji  { font-size: 1.5rem; line-height: 1; }
+.feed-name   { font-size: 0.65rem; color: var(--text-dim); }
+.feed-amount { font-size: 0.78rem; color: var(--green); font-weight: 500; }
+
+.feed-cooldown-msg {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-align: center;
+  min-height: 1rem;
+  transition: opacity 0.3s;
+}
+
 #chambers-panel {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -253,9 +269,9 @@ header h1 span {
   border-radius: var(--radius);
   color: var(--text);
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
   font-family: var(--font-mono);
-  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+  touch-action: manipulation;
 }
 
 .chamber-btn:hover:not(:disabled) {
@@ -263,17 +279,13 @@ header h1 span {
   background: rgba(200,131,42,0.08);
 }
 
-.chamber-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+.chamber-btn:disabled { opacity: 0.38; cursor: not-allowed; }
 
 .chamber-emoji { font-size: 1.4rem; line-height: 1; }
 .chamber-name  { font-size: 0.65rem; color: var(--text-dim); }
 .chamber-count { font-size: 0.8rem; color: var(--amber); font-weight: 500; }
 .chamber-cost  { font-size: 0.6rem; color: var(--text-muted); }
 
-/* ── DIARIO DE EVENTOS ───────────────────────────────────── */
 #event-log {
   max-height: 180px;
   overflow-y: auto;
@@ -285,7 +297,7 @@ header h1 span {
 }
 
 .log-entry {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   padding: 0.25rem 0.4rem;
   border-radius: 3px;
   border-left: 2px solid transparent;
@@ -293,23 +305,41 @@ header h1 span {
 }
 
 .log-day {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: var(--text-muted);
-  margin-right: 0.4rem;
+  margin-right: 0.35rem;
 }
 
-.log-info    { color: var(--text-dim);   border-left-color: var(--text-muted); }
-.log-success { color: var(--green);      border-left-color: var(--green); }
-.log-warning { color: var(--yellow);     border-left-color: var(--yellow); }
-.log-danger  { color: var(--red);        border-left-color: var(--red);
+.log-info    { color: var(--text-dim); border-left-color: var(--text-muted); }
+.log-success { color: var(--green);    border-left-color: var(--green); }
+.log-warning { color: var(--yellow);   border-left-color: var(--yellow); }
+.log-danger  { color: var(--red);      border-left-color: var(--red);
                background: rgba(176,48,32,0.08); }
 
-/* ── OVERLAY OFFLINE ─────────────────────────────────────── */
+#btn-delete-save {
+  display: block;
+  margin: 0.25rem auto 0;
+  padding: 0.35rem 1rem;
+  background: transparent;
+  border: 1px solid var(--red-dim);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+#btn-delete-save:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
 #offline-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(10,5,0,0.92);
+  background: rgba(10,5,0,0.93);
   z-index: 100;
   flex-direction: column;
   align-items: center;
@@ -323,13 +353,10 @@ header h1 span {
   font-family: var(--font-display);
   color: var(--amber-light);
   font-size: 1.1rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 }
 
-#offline-msg {
-  color: var(--text-dim);
-  font-size: 0.85rem;
-}
+#offline-msg { color: var(--text-dim); font-size: 0.85rem; }
 
 #offline-bar-track {
   width: 260px;
@@ -347,12 +374,11 @@ header h1 span {
   transition: width 0.3s ease;
 }
 
-/* ── GAME OVER ───────────────────────────────────────────── */
 #game-over {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(5,2,0,0.96);
+  background: rgba(5,2,0,0.97);
   z-index: 200;
   flex-direction: column;
   align-items: center;
@@ -371,15 +397,13 @@ header h1 span {
   letter-spacing: 0.1em;
 }
 
-#game-over .go-stats {
+.go-stats {
   color: var(--text-dim);
   font-size: 0.85rem;
-  line-height: 2;
+  line-height: 2.2;
 }
 
-#game-over .go-stats strong {
-  color: var(--amber-light);
-}
+.go-stats strong { color: var(--amber-light); }
 
 #btn-restart {
   margin-top: 0.5rem;
@@ -395,38 +419,14 @@ header h1 span {
   transition: background 0.2s;
 }
 
-#btn-restart:hover {
-  background: rgba(200,131,42,0.15);
-}
+#btn-restart:hover { background: rgba(200,131,42,0.15); }
 
-/* ── BOTÓN DE BORRAR SAVE ────────────────────────────────── */
-#btn-delete-save {
-  display: block;
-  margin: 0 auto;
-  padding: 0.35rem 1rem;
-  background: transparent;
-  border: 1px solid var(--red-dim);
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-#btn-delete-save:hover {
-  border-color: var(--red);
-  color: var(--red);
-}
-
-/* ── SCROLLBAR ───────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-/* ── RESPONSIVE (pantallas más anchas) ───────────────────── */
 @media (min-width: 480px) {
-  header h1  { font-size: 1.5rem; }
+  header h1     { font-size: 1.6rem; }
   #nest-wrapper { height: 300px; }
-  .resource-val { width: 8.5rem; }
+  .resource-val { width: 8rem; }
 }
