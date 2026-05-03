@@ -12,30 +12,30 @@
 
 <div id="app">
 
-  <!-- ── CABECERA ─────────────────────────────────────────── -->
+  <!-- CABECERA -->
 
   <header>
     <h1>Formi <span>Lasius niger</span></h1>
     <div id="day-counter">Día 0</div>
   </header>
 
-  <!-- ── VISTA DEL NIDO (CANVAS) ──────────────────────────── -->
+  <!-- VISTA DEL NIDO -->
 
   <div id="nest-wrapper">
     <canvas id="nest-canvas"></canvas>
   </div>
 
-  <!-- ── PANEL DE CONTROL ─────────────────────────────────── -->
+  <!-- PANEL DE CONTROL -->
 
   <div id="control-panel">
 
 ```
 <!-- Reina -->
 <div class="card" id="queen-card">
-  <div class="queen-icon">👑</div>
+  <div class="queen-icon">&#x1F451;</div>
   <div class="queen-info">
     <div class="card-title">Reina</div>
-    <div id="queen-status" class="queen-status alive">👑 Viva</div>
+    <div id="queen-status" class="queen-status alive">&#x1F451; Viva</div>
     <div id="queen-age">0 años</div>
   </div>
 </div>
@@ -45,19 +45,19 @@
   <div class="card-title">Población</div>
   <div id="population-grid">
     <div class="pop-item">
-      <span class="pop-label">🐜 Obreras</span>
+      <span class="pop-label">Obreras</span>
       <span class="pop-value" id="worker-count">0</span>
     </div>
     <div class="pop-item">
-      <span class="pop-label">🥚 Huevos</span>
+      <span class="pop-label">Huevos</span>
       <span class="pop-value" id="egg-count">0</span>
     </div>
     <div class="pop-item">
-      <span class="pop-label">🐛 Larvas</span>
+      <span class="pop-label">Larvas</span>
       <span class="pop-value" id="larvae-count">0</span>
     </div>
     <div class="pop-item">
-      <span class="pop-label">🫘 Pupas</span>
+      <span class="pop-label">Pupas</span>
       <span class="pop-value" id="pupae-count">0</span>
     </div>
   </div>
@@ -68,7 +68,7 @@
   <div class="card-title">Recursos</div>
 
   <div class="resource-row">
-    <span class="resource-emoji">🍬</span>
+    <span class="resource-label">Azúcar</span>
     <div class="resource-track">
       <div class="resource-fill ok" id="bar-sugar" style="width:0%"></div>
     </div>
@@ -76,7 +76,7 @@
   </div>
 
   <div class="resource-row">
-    <span class="resource-emoji">🪲</span>
+    <span class="resource-label">Proteína</span>
     <div class="resource-track">
       <div class="resource-fill ok" id="bar-protein" style="width:0%"></div>
     </div>
@@ -84,7 +84,7 @@
   </div>
 
   <div class="resource-row">
-    <span class="resource-emoji">💧</span>
+    <span class="resource-label">Agua</span>
     <div class="resource-track">
       <div class="resource-fill ok" id="bar-water" style="width:0%"></div>
     </div>
@@ -92,50 +92,69 @@
   </div>
 </div>
 
+<!-- Alimentar -->
+<div class="card">
+  <div class="card-title">Alimentar al nido</div>
+  <div id="feed-panel">
+    <button class="feed-btn" data-feed="sugar">
+      <span class="feed-emoji">&#x1F36C;</span>
+      <span class="feed-name">Azúcar</span>
+      <span class="feed-amount">+20</span>
+    </button>
+    <button class="feed-btn" data-feed="protein">
+      <span class="feed-emoji">&#x1FAB2;</span>
+      <span class="feed-name">Proteína</span>
+      <span class="feed-amount">+15</span>
+    </button>
+    <button class="feed-btn" data-feed="water">
+      <span class="feed-emoji">&#x1F4A7;</span>
+      <span class="feed-name">Agua</span>
+      <span class="feed-amount">+25</span>
+    </button>
+  </div>
+  <div id="feed-cooldown" class="feed-cooldown-msg"></div>
+</div>
+
 <!-- Cámaras -->
 <div class="card">
   <div class="card-title">Construir cámaras</div>
   <div id="chambers-panel">
-
     <button class="chamber-btn" data-chamber="brood" id="btn-brood">
-      <span class="chamber-emoji">🥚</span>
+      <span class="chamber-emoji">&#x1F95A;</span>
       <span class="chamber-name">Cría</span>
-      <span class="chamber-count">×0</span>
+      <span class="chamber-count">x0</span>
       <span class="chamber-cost"></span>
     </button>
-
     <button class="chamber-btn" data-chamber="storage" id="btn-storage">
-      <span class="chamber-emoji">📦</span>
+      <span class="chamber-emoji">&#x1F4E6;</span>
       <span class="chamber-name">Almacén</span>
-      <span class="chamber-count">×0</span>
+      <span class="chamber-count">x0</span>
       <span class="chamber-cost"></span>
     </button>
-
     <button class="chamber-btn" data-chamber="tunnel" id="btn-tunnel">
-      <span class="chamber-emoji">🕳️</span>
+      <span class="chamber-emoji">&#x1F573;&#xFE0F;</span>
       <span class="chamber-name">Túnel</span>
-      <span class="chamber-count">×0</span>
+      <span class="chamber-count">x0</span>
       <span class="chamber-cost"></span>
     </button>
-
   </div>
 </div>
 
-<!-- Diario del nido -->
+<!-- Diario -->
 <div class="card">
   <div class="card-title">Diario del nido</div>
   <div id="event-log"></div>
 </div>
 
 <!-- Borrar partida -->
-<button id="btn-delete-save">⚠ Borrar partida guardada</button>
+<button id="btn-delete-save">Borrar partida guardada</button>
 ```
 
-  </div><!-- /control-panel -->
+  </div>
 
-</div><!-- /app -->
+</div>
 
-<!-- ── OVERLAY: SIMULACIÓN OFFLINE ──────────────────────── -->
+<!-- OVERLAY OFFLINE -->
 
 <div id="offline-overlay">
   <h2>El nido ha seguido su curso</h2>
@@ -145,7 +164,7 @@
   </div>
 </div>
 
-<!-- ── GAME OVER ─────────────────────────────────────────── -->
+<!-- GAME OVER -->
 
 <div id="game-over">
   <h2>El nido ha perecido</h2>
@@ -157,7 +176,7 @@
   <button id="btn-restart">Comenzar de nuevo</button>
 </div>
 
-<!-- ── SCRIPTS (orden importante) ───────────────────────── -->
+<!-- SCRIPTS en orden de dependencia -->
 
 <script src="js/config.js"></script>
 
