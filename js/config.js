@@ -14,9 +14,9 @@
 const CONFIG = Object.freeze({
 
 // ── IDENTIDAD ──────────────────────────────────────────────
-GAME_NAME:  “Formicarium Vivo”,
+GAME_NAME:  “Formi”,
 SPECIES:    “Lasius niger”,
-SAVE_KEY:   “formicarium_vivo_v1”,
+SAVE_KEY:   “formi_v1”,
 
 // ── TIEMPO ─────────────────────────────────────────────────
 TICK_INTERVAL_MS: 5000,       // el loop principal corre cada 5 s
