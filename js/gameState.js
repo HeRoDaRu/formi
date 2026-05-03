@@ -6,17 +6,40 @@
 //  actual de la colonia.
 //
 //  Sistema de guardado:
-//  - Se guarda en localStorage como JSON.
-//  - Usa timestamps reales (Date.now()) para calcular tiempo
-//    transcurrido entre sesiones (progreso offline).
-//  - Si el SAVE_KEY cambia (nueva versión), el save anterior
-//    se descarta automáticamente.
+//  - Persiste en localStorage como JSON.
+//  - Usa timestamps reales (Date.now()) para tiempo offline.
+//  - Sin límite de progreso offline: si la colonia muere por
+//    falta de recursos mientras no jugabas, muere. Como en
+//    la realidad.
+//  - Sistema de migraciones encadenadas: los saves de versiones
+//    anteriores se actualizan sin perder datos.
+//
+//  Modelo de población por LOTES:
+//  - Huevos, larvas y pupas se agrupan por día de puesta/eclosión.
+//  - Cada lote: { ageDays: number, count: number }
+//  - Con 10.000 en desarrollo: ~33 objetos, no 10.000.
+//  - Obreras adultas: un único contador (su muerte es por edad
+//    media estadística, no individual — ver colony.js).
 // ============================================================
 
-// ── ESTRUCTURA BASE DEL ESTADO ─────────────────────────────
-// Función que devuelve un estado limpio basado en CONFIG.
-// Usada tanto para nueva partida como para resetear en tests.
+// ── VERSIÓN DEL ESQUEMA ────────────────────────────────────
+// Número entero que sube con cada cambio estructural del estado.
+// NUNCA bajar este número. SIEMPRE añadir una migración al subir.
+const SCHEMA_VERSION = 1;
 
+// ── MIGRACIONES ────────────────────────────────────────────
+// Cada clave es el número de versión AL QUE migra esa función.
+// Si el save está en v1 y el juego está en v3,
+// se aplican: MIGRATIONS[2] → MIGRATIONS[3] en orden.
+const MIGRATIONS = {
+// Ejemplo para futuras versiones:
+// 2: (state) => {
+//   state.chambers.tunnel = state.chambers.tunnel ?? 0;
+//   return state;
+// },
+};
+
+// ── ESTADO INICIAL LIMPIO ──────────────────────────────────
 function createFreshState() {
 const init = CONFIG.INITIAL_STATE;
 const now  = Date.now();
@@ -25,24 +48,35 @@ return {
 
 ```
 // ── Meta ────────────────────────────────────────────────
-version:      CONFIG.SAVE_KEY,
-lastSaveTime: now,   // timestamp del último guardado
-lastTickTime: now,   // timestamp del último tick procesado
-gameDay:      0,     // días transcurridos desde el inicio
+schemaVersion: SCHEMA_VERSION,
+lastSaveTime:  now,
+lastTickTime:  now,  // timestamp del último tick procesado
+gameDay:       0,    // días de juego transcurridos (entero)
 
 // ── Reina ───────────────────────────────────────────────
 queen: {
   alive:   true,
-  ageDays: CONFIG.LIFECYCLE.QUEEN_START_AGE, // llega ya con 1 año
+  ageDays: CONFIG.LIFECYCLE.QUEEN_START_AGE,
 },
 
-// ── Población ───────────────────────────────────────────
+// ── Población adulta ────────────────────────────────────
+// Obreras adultas: un contador + edad media acumulada.
+// La mortalidad es estadística: cada día muere una fracción
+// proporcional a 1/WORKER_LIFESPAN (distribución uniforme).
+// Esto es una aproximación válida con colonias grandes.
 workers: init.workers,
 
-// Huevos, larvas y pupas se almacenan como arrays de objetos
-// para poder rastrear la edad individual de cada uno.
-// Cada elemento: { ageDays: number }
-eggs:   Array.from({ length: init.eggs },   () => ({ ageDays: 0 })),
+// ── Población en desarrollo (LOTES) ─────────────────────
+// Cada lote representa individuos puestos/eclosionados
+// el mismo día. { ageDays: number, count: number }
+//
+// ageDays se incrementa cada día de juego.
+// Cuando ageDays supera la duración de esa fase, el lote
+// avanza a la siguiente (egg→larva→pupa→worker).
+//
+// Con colonias de miles: el array nunca supera ~33 elementos
+// (un lote por día del ciclo completo de ~33 días).
+eggs:   [{ ageDays: 0, count: init.eggs }],
 larvae: [],
 pupae:  [],
 
@@ -52,7 +86,6 @@ protein: init.protein,
 water:   init.water,
 
 // ── Cámaras ─────────────────────────────────────────────
-// Número de cámaras de cada tipo construidas.
 chambers: {
   queen:   init.chambers.queen,
   brood:   init.chambers.brood,
@@ -60,17 +93,21 @@ chambers: {
   tunnel:  init.chambers.tunnel,
 },
 
-// ── Estadísticas (no afectan lógica, solo informativas) ──
+// ── Estadísticas ────────────────────────────────────────
+// Solo informativas. No afectan a la lógica del juego.
 stats: {
-  totalWorkersEverBorn: init.workers, // nanitics iniciales cuentan
+  totalWorkersEverBorn: init.workers,
   totalEggsLaid:        init.eggs,
   totalWorkerDeaths:    0,
+  totalLarvaeStarved:   0,  // larvas muertas por falta de agua
   peakWorkers:          init.workers,
-  totalFoodCollected:   0,            // suma de todos los recursos
+  totalFoodCollected:   0,
+  daysPlayed:           0,
 },
 
-// ── Log de eventos ───────────────────────────────────────
-// Últimos N eventos para mostrar en el diario del nido.
+// ── Diario del nido ─────────────────────────────────────
+// Eventos recientes para mostrar al jugador.
+// Orden: más reciente primero.
 eventLog: [
   {
     day:  0,
@@ -79,9 +116,10 @@ eventLog: [
   }
 ],
 
-// ── Flags de UI ──────────────────────────────────────────
+// ── Flags ───────────────────────────────────────────────
 ui: {
-  firstVisit: true, // muestra tutorial la primera vez
+  firstVisit:        true,
+  offlineWarningShown: false,
 },
 ```
 
@@ -89,37 +127,33 @@ ui: {
 }
 
 // ── ESTADO GLOBAL ──────────────────────────────────────────
-// Variable mutable única. Toda la lógica del juego la modifica.
 let gameState = createFreshState();
 
 // ── LÍMITES DINÁMICOS DE RECURSOS ──────────────────────────
-// Calculados a partir del número de cámaras de almacén.
 function getResourceLimits() {
-const f  = CONFIG.FORAGING;
-const ch = CONFIG.CHAMBERS;
+const f            = CONFIG.FORAGING;
 const storageCount = gameState.chambers.storage;
+const tunnelCount  = gameState.chambers.tunnel;
 
-// Multiplicador acumulado por cámaras de almacén
-// Con 0 almacenes: x1.0 (base)
-// Con 1 almacén:   x1.6
-// Con 2 almacenes: x2.56
-const mult = Math.pow(ch.STORAGE.storage_multiplier, storageCount);
+const storageMult  = Math.pow(
+CONFIG.CHAMBERS.STORAGE.storage_multiplier,
+storageCount
+);
 
-// Bonus plano por túneles (más acceso al exterior = más agua disponible)
-const tunnelBonus = gameState.chambers.tunnel * 0.15;
+// Los túneles amplían solo el agua (más acceso al exterior)
+const waterTunnelBonus = tunnelCount * 0.15;
 
 return {
-sugar:   Math.floor(f.BASE_MAX_SUGAR   * mult),
-protein: Math.floor(f.BASE_MAX_PROTEIN * mult),
-water:   Math.floor(f.BASE_MAX_WATER   * (mult + tunnelBonus)),
+sugar:   Math.floor(f.BASE_MAX_SUGAR   * storageMult),
+protein: Math.floor(f.BASE_MAX_PROTEIN * storageMult),
+water:   Math.floor(f.BASE_MAX_WATER   * (storageMult + waterTunnelBonus)),
 };
 }
 
-// ── CAPACIDAD DEL NIDO ─────────────────────────────────────
-// Cuántos individuos en desarrollo caben según cámaras de cría.
+// ── CAPACIDAD DE CRÍA ──────────────────────────────────────
 function getNestCapacity() {
 const ch    = CONFIG.CHAMBERS.BROOD;
-const count = gameState.chambers.brood;
+const count = Math.max(1, gameState.chambers.brood);
 return {
 maxEggs:   ch.max_eggs_per_chamber   * count,
 maxLarvae: ch.max_larvae_per_chamber * count,
@@ -127,21 +161,33 @@ maxPupae:  ch.max_pupae_per_chamber  * count,
 };
 }
 
+// ── CONTADORES DE POBLACIÓN ────────────────────────────────
+// Suma todos los lotes de una fase.
+function countEggs()   { return gameState.eggs.reduce((s, b) => s + b.count, 0); }
+function countLarvae() { return gameState.larvae.reduce((s, b) => s + b.count, 0); }
+function countPupae()  { return gameState.pupae.reduce((s, b) => s + b.count, 0); }
+
 // ── GUARDADO ───────────────────────────────────────────────
-function saveGame() {
+// Guardado debounced: se llama frecuente pero solo escribe
+// a localStorage si han pasado al menos SAVE_DEBOUNCE_MS.
+const SAVE_DEBOUNCE_MS = 10_000; // máximo 1 escritura cada 10 s
+let   _lastWriteTime   = 0;
+
+function saveGame(force = false) {
+const now = Date.now();
+if (!force && (now - _lastWriteTime) < SAVE_DEBOUNCE_MS) return;
+
 try {
-gameState.lastSaveTime = Date.now();
+gameState.lastSaveTime = now;
 localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify(gameState));
+_lastWriteTime = now;
 } catch (e) {
-// localStorage puede fallar si está lleno o en modo privado
 console.warn(”[Formicarium] No se pudo guardar:”, e.message);
 }
 }
 
 // ── CARGA ──────────────────────────────────────────────────
-// Devuelve true si se cargó una partida existente.
-// Devuelve false si se empezó de cero (save no encontrado o
-// versión incompatible).
+// Devuelve true si se restauró una partida existente.
 function loadGame() {
 try {
 const raw = localStorage.getItem(CONFIG.SAVE_KEY);
@@ -150,17 +196,11 @@ if (!raw) return false;
 ```
 const saved = JSON.parse(raw);
 
-// Validación de versión: si el save es de otra versión, descartamos.
-if (saved.version !== CONFIG.SAVE_KEY) {
-  console.info("[Formicarium] Save de versión anterior descartado.");
-  return false;
-}
+// Migrar si es necesario
+const migrated = migrateSave(saved);
+if (!migrated) return false; // migración falló, empezar de cero
 
-// Merge defensivo: si el save tiene campos que el estado fresco
-// no tiene (o viceversa), los completamos para no romper nada.
-const fresh = createFreshState();
-gameState = deepMerge(fresh, saved);
-
+gameState = migrated;
 return true;
 ```
 
@@ -176,60 +216,90 @@ localStorage.removeItem(CONFIG.SAVE_KEY);
 gameState = createFreshState();
 }
 
-// ── PROGRESO OFFLINE ───────────────────────────────────────
-// Calcula cuántos días reales pasaron desde el último tick
-// y devuelve el número de días a simular.
-// Se llama al inicio de la sesión, antes del primer tick.
-function calculateOfflineDays() {
-const now         = Date.now();
-const elapsedMs   = now - gameState.lastTickTime;
-const elapsedDays = elapsedMs / CONFIG.MS_PER_DAY;
+// ── SISTEMA DE MIGRACIONES ─────────────────────────────────
+function migrateSave(saved) {
+let version = saved.schemaVersion ?? 0;
 
-// Límite de progreso offline: 7 días.
-// Más de eso sería demasiado para simular de golpe y
-// también es biológicamente cuestionable (la colonia necesita
-// atención activa del jugador para sobrevivir semanas sin recursos).
-const MAX_OFFLINE_DAYS = 7;
-return Math.min(elapsedDays, MAX_OFFLINE_DAYS);
+// Si el save es más nuevo que el juego: no tocar (downgrade)
+if (version > SCHEMA_VERSION) {
+console.warn(”[Formicarium] Save más nuevo que el juego. Se descarta.”);
+return null;
+}
+
+// Aplicar migraciones encadenadas hasta alcanzar SCHEMA_VERSION
+while (version < SCHEMA_VERSION) {
+version++;
+if (MIGRATIONS[version]) {
+try {
+saved = MIGRATIONS[version](saved);
+saved.schemaVersion = version;
+console.info(`[Formicarium] Save migrado a schema v${version}.`);
+} catch (e) {
+console.warn(`[Formicarium] Migración v${version} falló:`, e.message);
+return null;
+}
+} else {
+// No hay función de migración para esta versión:
+// asumimos que es compatible (solo se añadieron campos nuevos).
+saved.schemaVersion = version;
+}
+}
+
+// Merge defensivo final: garantiza que todos los campos
+// del estado fresco existen en el save (por si una migración
+// no añadió un campo nuevo).
+const fresh = createFreshState();
+return deepMerge(fresh, saved);
+}
+
+// ── PROGRESO OFFLINE ───────────────────────────────────────
+// Sin límite. Si la colonia muere offline, muere.
+function calculateOfflineDays() {
+const now       = Date.now();
+const elapsedMs = now - gameState.lastTickTime;
+return elapsedMs / CONFIG.MS_PER_DAY; // puede ser fracción de día
 }
 
 // ── LOG DE EVENTOS ─────────────────────────────────────────
-const MAX_LOG_ENTRIES = 50;
+const MAX_LOG_ENTRIES = 60;
 
 function logEvent(text, type = “info”) {
+// Evitar entradas duplicadas consecutivas
+if (gameState.eventLog[0]?.text === text) return;
+
 gameState.eventLog.unshift({
-day:  gameState.gameDay,
+day: gameState.gameDay,
 text,
 type, // “info” | “warning” | “danger” | “success”
 });
 
-// Mantener solo los últimos N eventos
 if (gameState.eventLog.length > MAX_LOG_ENTRIES) {
 gameState.eventLog.length = MAX_LOG_ENTRIES;
 }
 }
 
-// ── UTILIDAD: DEEP MERGE ───────────────────────────────────
-// Merge recursivo que usa `base` como estructura de referencia
-// y sobreescribe con valores de `override` donde existan.
-// Garantiza que saves viejos no rompan estados nuevos.
+// ── DEEP MERGE ─────────────────────────────────────────────
+// Usa `base` como estructura de referencia.
+// Sobreescribe con valores de `override` donde coincidan.
+// Campos nuevos en base (no en override) se mantienen frescos.
+// Campos en override que no existen en base se ignoran.
 function deepMerge(base, override) {
-if (typeof base !== “object” || base === null) return override ?? base;
-if (typeof override !== “object” || override === null) return base;
+// Casos base
+if (override === undefined || override === null) return base;
+if (typeof base !== “object” || base === null)   return override;
 
-const result = Array.isArray(base) ? […base] : { …base };
+// Arrays: en este juego los arrays del save son la fuente de verdad
+// (lotes de huevos/larvas/pupas y eventLog tienen datos reales).
+if (Array.isArray(base)) {
+return Array.isArray(override) ? override : base;
+}
 
-for (const key of Object.keys(override)) {
-if (key in base) {
+const result = { …base };
+for (const key of Object.keys(base)) {
+if (key in override) {
 result[key] = deepMerge(base[key], override[key]);
-} else {
-// Campo del save que ya no existe en la estructura nueva → ignorar
-// (no lo copiamos para no contaminar el estado)
 }
+// Si la clave no está en override, mantiene el valor fresco de base
 }
-
-// Campos nuevos en base que no existían en el save → los mantenemos
-// con su valor fresco (ya están en result desde el spread inicial)
-
 return result;
 }
