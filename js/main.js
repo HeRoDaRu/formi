@@ -1,5 +1,5 @@
 // ============================================================
-//  FORMICARIUM VIVO — js/main.js
+//  FORMI — js/main.js
 //
 //  Punto de entrada. Orquesta:
 //  - Carga del save
@@ -10,30 +10,30 @@
 // ============================================================
 
 // ── ARRANQUE ───────────────────────────────────────────────
-document.addEventListener(“DOMContentLoaded”, () => {
-initUI();
+document.addEventListener('DOMContentLoaded', () => {
+  initUI();
 
-const hasSave = loadGame();
+  const hasSave = loadGame();
 
-if (hasSave) {
-// Simular días offline antes de mostrar nada
-const days = simulateOffline(offlineProgressHandler);
-if (days === 0) {
-// Menos de un día: no hay overlay, render directo
-render();
-} else {
-// El overlay ya se mostró durante la simulación
-render();
-}
-} else {
-// Nueva partida: mostrar hint de bienvenida
-logEvent(“🐜 Bienvenido a Formi. Tu reina ha llegado.”, “success”);
-logEvent(“💡 Construye cámaras de cría para dar espacio al nido.”, “info”);
-render();
-}
+  if (hasSave) {
+    // Simular días offline antes de mostrar nada
+    const days = simulateOffline(offlineProgressHandler);
+    if (days === 0) {
+      // Menos de un día: no hay overlay, render directo
+      render();
+    } else {
+      // El overlay ya se mostró durante la simulación
+      render();
+    }
+  } else {
+    // Nueva partida: mostrar hint de bienvenida
+    logEvent('🐜 Bienvenido a Formi. Tu reina ha llegado.', 'success');
+    logEvent('💡 Construye cámaras de cría para dar espacio al nido.', 'info');
+    render();
+  }
 
-startLogicLoop();
-startRenderLoop();
+  startLogicLoop();
+  startRenderLoop();
 });
 
 // ── LOOP DE LÓGICA ─────────────────────────────────────────
@@ -47,54 +47,52 @@ let _fractionalDayAccumulator = 0;
 let _logicInterval = null;
 
 function startLogicLoop() {
-_logicInterval = setInterval(() => {
-const now        = Date.now();
-const elapsedMs  = now - gameState.lastTickTime;
-const elapsedDays = elapsedMs / CONFIG.MS_PER_DAY;
+  _logicInterval = setInterval(() => {
+    const now = Date.now();
+    const elapsedMs = now - gameState.lastTickTime;
+    const elapsedDays = elapsedMs / CONFIG.MS_PER_DAY;
 
-```
-_fractionalDayAccumulator += elapsedDays;
+    _fractionalDayAccumulator += elapsedDays;
 
-// Procesar todos los días completos acumulados
-const daysToProcess = Math.floor(_fractionalDayAccumulator);
-if (daysToProcess >= 1) {
-  for (let i = 0; i < daysToProcess; i++) {
-    tickDay();
-  }
-  _fractionalDayAccumulator -= daysToProcess;
-}
+    // Procesar todos los días completos acumulados
+    const daysToProcess = Math.floor(_fractionalDayAccumulator);
+    if (daysToProcess >= 1) {
+      for (let i = 0; i < daysToProcess; i++) {
+        tickDay();
+      }
+      _fractionalDayAccumulator -= daysToProcess;
+    }
 
-// Actualizar lastTickTime aunque no haya procesado días
-// (para que el acumulador no se dispare si el tab queda en background)
-gameState.lastTickTime = now;
+    // Actualizar lastTickTime aunque no haya procesado días
+    // (para que el acumulador no se dispare si el tab queda en background)
+    gameState.lastTickTime = now;
 
-render();
-saveGame();
-```
+    render();
+    saveGame();
 
-}, CONFIG.TICK_INTERVAL_MS);
+  }, CONFIG.TICK_INTERVAL_MS);
 }
 
 // ── LOOP DE RENDER (60fps) ─────────────────────────────────
 // Solo redibuja el canvas del nido (hormigas animadas).
 // El panel de control (DOM) solo se actualiza en el loop de lógica.
 function startRenderLoop() {
-function frame() {
-renderNest(); // solo el canvas, no el DOM completo
-requestAnimationFrame(frame);
-}
-requestAnimationFrame(frame);
+  function frame() {
+    renderNest(); // solo el canvas, no el DOM completo
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 // ── VISIBILIDAD DE PESTAÑA ─────────────────────────────────
 // Cuando el tab vuelve a ser visible, recalculamos el tiempo
 // offline y resincronizamos el acumulador.
-document.addEventListener(“visibilitychange”, () => {
-if (document.visibilityState === “visible”) {
-const days = simulateOffline(offlineProgressHandler);
-if (days > 0) render();
-// Resetear acumulador para no sumar doble
-_fractionalDayAccumulator = 0;
-gameState.lastTickTime = Date.now();
-}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    const days = simulateOffline(offlineProgressHandler);
+    if (days > 0) render();
+    // Resetear acumulador para no sumar doble
+    _fractionalDayAccumulator = 0;
+    gameState.lastTickTime = Date.now();
+  }
 });
