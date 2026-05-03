@@ -1,4 +1,4 @@
-# Formicarium Vivo
+# Formi
 
 > *Cría tu colonia de Lasius niger. Un formicario virtual con biología real.*
 
@@ -6,7 +6,7 @@
 
 ## Qué es
 
-**Formicarium Vivo** es un juego de simulación basado en navegador en el que cuidas una colonia real de *Lasius niger* (hormiga negra común). No hay mecánicas inventadas: cada valor del juego está basado en datos documentados de laboratorio y registros de aficionados con colonias en interior.
+**Formi** es un juego de simulación basado en navegador en el que cuidas una colonia real de *Lasius niger* (hormiga negra común). No hay mecánicas inventadas: cada valor del juego está basado en datos documentados de laboratorio y registros de aficionados con colonias en interior.
 
 El tiempo corre en tiempo real. Un día en el juego es un día en tu vida. Si te olvidas de alimentar a las hormigas, mueren.
 
@@ -66,7 +66,7 @@ No hay límite de progreso offline. Si no abres el juego durante días, la simul
 ## Estructura del proyecto
 
 ```
-formicarium-vivo/
+formi/
 ├── index.html          — estructura HTML y orden de carga de scripts
 ├── css/
 │   └── style.css       — estilos (tema naturalista oscuro, mobile-first)
