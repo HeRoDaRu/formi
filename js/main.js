@@ -76,8 +76,25 @@ function startLogicLoop() {
 // ── LOOP DE RENDER (60fps) ─────────────────────────────────
 // Solo redibuja el canvas del nido (hormigas animadas).
 // El panel de control (DOM) solo se actualiza en el loop de lógica.
+let _lastFrameTime = 0;
+let _orderUiAccum = 0;
+
 function startRenderLoop() {
-  function frame() {
+  _lastFrameTime = performance.now();
+  function frame(now) {
+    const dt = now - _lastFrameTime;
+    _lastFrameTime = now;
+
+    // Avanzar órdenes en tiempo real
+    tickTasks(dt);
+
+    // Refrescar el panel de órdenes ~4 veces/seg para que la barra avance
+    _orderUiAccum += dt;
+    if (_orderUiAccum > 250) {
+      _orderUiAccum = 0;
+      _renderOrders();
+    }
+
     renderNest(); // solo el canvas, no el DOM completo
     requestAnimationFrame(frame);
   }
