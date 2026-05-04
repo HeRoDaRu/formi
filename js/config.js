@@ -20,7 +20,8 @@ const CONFIG = Object.freeze({
 
   // ── TIEMPO ─────────────────────────────────────────────────
   TICK_INTERVAL_MS: 5000,       // el loop principal corre cada 5 s
-  MS_PER_DAY: 86_400_000, // milisegundos en un día real exacto
+  // MS_PER_DAY: 86_400_000, // milisegundos en un día real exacto
+  MS_PER_DAY: 60_000, // milisegundos en un día real exacto
 
   // ── CICLO DE VIDA (días reales a ~23 °C) ───────────────────
   // Fuente: AntWiki 'Lasius niger', datos de cría controlada.

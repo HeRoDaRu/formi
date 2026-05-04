@@ -33,29 +33,29 @@ const UI = {
 
 // ── INIT ───────────────────────────────────────────────────
 function initUI() {
-  UI.queenStatus = document.getElementById('queen - status');
-  UI.queenAge = document.getElementById('queen - age');
-  UI.workerCount = document.getElementById('worker - count');
-  UI.eggCount = document.getElementById('egg - count');
-  UI.larvaeCount = document.getElementById('larvae - count');
-  UI.pupaeCount = document.getElementById('pupae - count');
-  UI.sugarBar = document.getElementById('bar - sugar');
-  UI.proteinBar = document.getElementById('bar - protein');
-  UI.waterBar = document.getElementById('bar - water');
-  UI.sugarVal = document.getElementById('val - sugar');
-  UI.proteinVal = document.getElementById('val - protein');
-  UI.waterVal = document.getElementById('val - water');
-  UI.dayCounter = document.getElementById('day - counter');
-  UI.nestCanvas = document.getElementById('nest - canvas');
-  UI.eventLog = document.getElementById('event - log');
-  UI.btnBrood = document.getElementById('btn - brood');
-  UI.btnStorage = document.getElementById('btn - storage');
-  UI.btnTunnel = document.getElementById('btn - tunnel');
-  UI.offlineOverlay = document.getElementById('offline - overlay');
-  UI.offlineMsg = document.getElementById('offline - msg');
-  UI.offlineBar = document.getElementById('offline - bar');
-  UI.gameOverScreen = document.getElementById('game - over');
-  UI.feedCooldown = document.getElementById('feed - cooldown');
+  UI.queenStatus = document.getElementById('queen-status');
+  UI.queenAge = document.getElementById('queen-age');
+  UI.workerCount = document.getElementById('worker-count');
+  UI.eggCount = document.getElementById('egg-count');
+  UI.larvaeCount = document.getElementById('larvae-count');
+  UI.pupaeCount = document.getElementById('pupae-count');
+  UI.sugarBar = document.getElementById('bar-sugar');
+  UI.proteinBar = document.getElementById('bar-protein');
+  UI.waterBar = document.getElementById('bar-water');
+  UI.sugarVal = document.getElementById('val-sugar');
+  UI.proteinVal = document.getElementById('val-protein');
+  UI.waterVal = document.getElementById('val-water');
+  UI.dayCounter = document.getElementById('day-counter');
+  UI.nestCanvas = document.getElementById('nest-canvas');
+  UI.eventLog = document.getElementById('event-log');
+  UI.btnBrood = document.getElementById('btn-brood');
+  UI.btnStorage = document.getElementById('btn-storage');
+  UI.btnTunnel = document.getElementById('btn-tunnel');
+  UI.offlineOverlay = document.getElementById('offline-overlay');
+  UI.offlineMsg = document.getElementById('offline-msg');
+  UI.offlineBar = document.getElementById('offline-bar');
+  UI.gameOverScreen = document.getElementById('game-over');
+  UI.feedCooldown = document.getElementById('feed-cooldown');
 
   if (UI.nestCanvas) {
     UI.nestCtx = UI.nestCanvas.getContext('2d');
@@ -558,7 +558,7 @@ function offlineProgressHandler({ phase, current, total }) {
 
 // ── HELPERS ────────────────────────────────────────────────
 function _fmt(n) {
-  return Math.floor(n).toLocaleString('es - ES');
+  return Math.floor(n).toLocaleString('es-ES');
 }
 
 function _setIfChanged(key, value) {
