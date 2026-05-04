@@ -25,6 +25,11 @@
 
     <div id="nest-wrapper">
       <canvas id="nest-canvas"></canvas>
+      <div id="nest-controls">
+        <button class="nest-btn" id="nest-zoom-in" title="Acercar">+</button>
+        <button class="nest-btn" id="nest-zoom-out" title="Alejar">&minus;</button>
+        <button class="nest-btn" id="nest-fit" title="Ver todo">&#x26F6;</button>
+      </div>
     </div>
 
     <!-- PANEL DE CONTROL -->
@@ -116,6 +121,45 @@
         <div id="feed-cooldown" class="feed-cooldown-msg"></div>
       </div>
 
+      <!-- Órdenes -->
+      <div class="card">
+        <div class="card-title">Órdenes</div>
+        <div class="orders-available">
+          Obreras libres: <strong id="orders-available">0</strong> / <span id="orders-total">0</span>
+        </div>
+        <div id="orders-queue-panel">
+          <button class="order-btn" data-order="dig-tunnel">
+            <span class="order-emoji">&#x1F573;&#xFE0F;</span>
+            <span class="order-name">Excavar túnel</span>
+          </button>
+          <button class="order-btn" data-order="build-brood">
+            <span class="order-emoji">&#x1F95A;</span>
+            <span class="order-name">Cámara de cría</span>
+          </button>
+          <button class="order-btn" data-order="build-storage">
+            <span class="order-emoji">&#x1F4E6;</span>
+            <span class="order-name">Almacén</span>
+          </button>
+          <button class="order-btn" data-order="gather-sugar">
+            <span class="order-emoji">&#x1F36C;</span>
+            <span class="order-name">Recolectar azúcar</span>
+          </button>
+          <button class="order-btn" data-order="gather-protein">
+            <span class="order-emoji">&#x1FAB2;</span>
+            <span class="order-name">Cazar proteína</span>
+          </button>
+          <button class="order-btn" data-order="gather-water">
+            <span class="order-emoji">&#x1F4A7;</span>
+            <span class="order-name">Traer agua</span>
+          </button>
+          <button class="order-btn" data-order="patrol">
+            <span class="order-emoji">&#x1F6E1;&#xFE0F;</span>
+            <span class="order-name">Patrullar</span>
+          </button>
+        </div>
+        <div id="orders-active"></div>
+      </div>
+
       <!-- Cámaras -->
       <div class="card">
         <div class="card-title">Construir cámaras</div>
@@ -148,7 +192,7 @@
       </div>
 
       <!-- Borrar partida -->
-      <button id="btn-delete-save">Borrar partida guardada</button>
+      <button id="btn-delete-save" type="button" onclick="window.formiResetGame()">Borrar partida guardada</button>
 
     </div>
 
@@ -183,6 +227,8 @@
   <script src="js/gameState.js"></script>
 
   <script src="js/colony.js"></script>
+
+  <script src="js/tasks.js"></script>
 
   <script src="js/ui.js"></script>
 

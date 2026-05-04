@@ -120,6 +120,10 @@ function createFreshState() {
     daysWithoutProtein: 0,
     lastFedTime: { sugar: 0, protein: 0, water: 0 },
 
+    // ── Órdenes del jugador ─────────────────────────────────
+    tasks: [],
+    taskNextId: 1,
+
     // ── Flags ───────────────────────────────────────────────
     ui: {
       firstVisit: true,
